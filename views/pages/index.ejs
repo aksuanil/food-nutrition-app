@@ -1,0 +1,47 @@
+<div>
+    <form action="/" method="post">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <input type="submit" value="Submit">
+      </form> 
+</div>
+
+<div>
+  <% foods?.forEach(function(item){ %>
+    <div>
+      <%= item.foodInfo.foodName %> <button>add</button> <br/> <%= item.foodInfo.foodNameTurkish %>
+    </div>
+
+<div style="display:flex">
+  <div>
+      <li style="margin-left:20px;"><%= item.foodNutrients.proteinNutrientName %></li>
+      <li style="margin-left:20px;"><%= item.foodNutrients.proteinValue %></li>
+      <li style="margin-left:20px;"><%= item.foodNutrients.proteinUnitName %></li>
+  </div>
+  <div>
+    <li style="margin-left:20px;"><%= item.foodNutrients.fatNutrientName %></li>
+    <li style="margin-left:20px;"><%= item.foodNutrients.fatValue %></li>
+    <li style="margin-left:20px;"><%= item.foodNutrients.fatUnitName %></li>
+  </div>
+  <div>
+    <li style="margin-left:20px;"><%= item.foodNutrients.carbohydrateNutrientName %></li>
+    <li style="margin-left:20px;"><%= item.foodNutrients.carbohydrateValue %></li>
+    <li style="margin-left:20px;"><%= item.foodNutrients.carbohydrateUnitName %></li>
+  </div>
+  <div>
+    <li style="margin-left:20px;"><%= item.foodNutrients.energyNutrientName %></li>
+    <li style="margin-left:20px;"><%= item.foodNutrients.energyValue %></li>
+    <li style="margin-left:20px;"><%= item.foodNutrients.energyUnitName %></li>
+  </div>  
+
+  <% item.foodMeasures.forEach(function(item){ %>
+  <div>
+    <li style="margin-left:20px;"><%= item.disseminationText %></li>
+    <li style="margin-left:20px;"><%= item.gramWeight %></li>
+  </div>
+  <% }); %>
+
+</div>
+  <% }); %>
+
+</div>
