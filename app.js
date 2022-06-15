@@ -2,9 +2,14 @@ import fetch from 'node-fetch';
 import express from 'express';
 import translate from 'translate-google';
 import bodyParser from 'body-parser';
+import insertFoodData from './services/db/insertFood.js';
+import { searchAutocompleteFood } from './services/db/searchFood.js';
+import { MongoClient, ServerApiVersion } from 'mongodb';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+let client;
+
 var jsonParser = bodyParser.json()
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
@@ -19,6 +24,33 @@ app.get('/', (req, res) => {
         foods: foodArray
     })
 })
+app.get('/createMeal', (req, res) => {
+    res.render('pages/createMeal', {})
+})
+
+app.get('/createMeal/searchFood', async (req, res) => {
+    let foodResultArray = [];
+    await searchAutocompleteFood(client, req.query.search, foodResultArray);
+    res.render('pages/createMeal/searchFood', { data: foodResultArray });
+});
+
+async function connectMongo() {
+    const uri = "mongodb+srv://aksuanil25:aksuanil25@cluster0.qcf7o.mongodb.net/retryWrites=true&w=majority";
+    client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+    try {
+        await client.connect();
+        // await findFoodByName(client, "Potato");
+        // await client.db("NutritionApp").collection("BasicFoodDetails").deleteMany({})
+        console.log("Connected to MongoDB");
+    } catch (error) {
+        console.log(error);
+    }
+    // finally {
+    //     console.log('Connected to MongoDB');
+    //     await client.close();
+    // }
+}
+connectMongo().catch(console.error);
 
 app.post('/', urlencodedParser, async (req, res) => {
     foodArray = [];
@@ -35,7 +67,7 @@ app.post('/add', urlencodedParser, async (req, res) => {
     const search = await req.body.postFood;
     const obj = JSON.parse(search);
     //Mongo Insert
-    await insertFoodData(obj);
+    await insertFoodData(client, obj);
 })
 
 class Food {
@@ -287,24 +319,8 @@ async function getFoodDataByName(search) {
 
 }
 
-// const { MongoClient, ServerApiVersion } = require('mongodb');
 
-// async function main() {
-//     const uri = "mongodb+srv://aksuanil25:anilaksu25@cluster0.qcf7o.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
-//     const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
-//     try {
-//         await client.connect();
-//         await findFoodByName(client, "Potato");
-//         // await client.db("NutritionApp").collection("BasicFoodDetails").deleteMany({})
-//     } catch (error) {
-//         console.log(error);
-//     }
-//     finally {
-//         await client.close();
-//     }
-// }
 
-// main().catch(console.error);
 
 // async function listDatabases(client) {
 //     const dbList = await client.db().admin().listDatabases();
